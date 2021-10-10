@@ -20,7 +20,7 @@ class AuthenticationLoggerServiceProvider extends PackageServiceProvider
     public function configurePackage(Package $package): void
     {
         $package
-            ->name('auth-logger')
+            ->name('authentication-logger')
             ->hasConfigFile()
             ->hasViews()
             ->hasMigration('create_authentication_log_table')
@@ -32,4 +32,5 @@ class AuthenticationLoggerServiceProvider extends PackageServiceProvider
         $events->listen(Logout::class, LogoutListener::class);
         $events->listen(OtherDeviceLogout::class, OtherDeviceLogoutListener::class);
     }
+
 }
