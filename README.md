@@ -6,7 +6,7 @@ Authentication Logger is a package which tracks your user's authentication infor
 You can install the package via composer:
 
 ```bash
-composer require siberfx/laravel-authentication-log
+composer require siberfx/authentication-log
 ```
 
 If you want the location features you must also install `torann/geoip`:
