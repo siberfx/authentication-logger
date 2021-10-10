@@ -2,35 +2,54 @@
 
 namespace Siberfx\AuthenticationLogger;
 
-use Illuminate\Auth\Events\Failed;
-use Illuminate\Auth\Events\Login;
-use Illuminate\Auth\Events\Logout;
-use Illuminate\Auth\Events\OtherDeviceLogout;
-use Illuminate\Contracts\Events\Dispatcher;
-use Siberfx\AuthenticationLogger\Commands\PurgeAuthenticationLogCommand;
-use Siberfx\AuthenticationLogger\Listeners\FailedLoginListener;
-use Siberfx\AuthenticationLogger\Listeners\LoginListener;
-use Siberfx\AuthenticationLogger\Listeners\LogoutListener;
-use Siberfx\AuthenticationLogger\Listeners\OtherDeviceLogoutListener;
-use Spatie\LaravelPackageTools\Package;
-use Spatie\LaravelPackageTools\PackageServiceProvider;
+use Illuminate\Support\ServiceProvider;
 
-class AuthenticationLoggerServiceProvider extends PackageServiceProvider
-{
-    public function configurePackage(Package $package): void
+class AuthenticationLoggerServiceProvider extends ServiceProvider {
+
+    // create_authentication_log_table
+
+    /**
+     * Indicates if loading of the provider is deferred.
+     *
+     * @var bool
+     */
+    protected $defer = false;
+
+    /**
+     * Bootstrap the application events.
+     *
+     * @return void
+     */
+    public function boot()
     {
-        $package
-            ->name('authentication-logger')
-            ->hasConfigFile()
-            ->hasViews()
-            ->hasMigration('create_authentication_log_table')
-            ->hasCommand(PurgeAuthenticationLogCommand::class);
+        $configPath = __DIR__.'/../../config/auth-logger.php';
+        $this->publishes([$configPath => config_path('auth-logger.php')]);
 
-        $events = $this->app->make(Dispatcher::class);
-        $events->listen(Login::class, LoginListener::class);
-        $events->listen(Failed::class, FailedLoginListener::class);
-        $events->listen(Logout::class, LogoutListener::class);
-        $events->listen(OtherDeviceLogout::class, OtherDeviceLogoutListener::class);
+        $this->publishes([__DIR__.'/database/migrations' => database_path('migrations')], 'migrations');
+
+        $this->loadViewsFrom(__DIR__.'/../../views', 'auth-logger');
+    }
+
+    /**
+     * Register the service provider.
+     *
+     * @return void
+     */
+    public function register()
+    {
+        $configPath = __DIR__.'/../../config/auth-logger.php';
+        $this->mergeConfigFrom($configPath, 'auth-logger');
+
+    }
+
+    /**
+     * Get the services provided by the provider.
+     *
+     * @return array
+     */
+    public function provides()
+    {
+        return array('authentication-logger');
     }
 
 }

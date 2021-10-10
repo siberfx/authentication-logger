@@ -20,4 +20,9 @@ return new class extends Migration
             $table->json('location')->nullable();
         });
     }
+
+    public function down()
+    {
+        Schema::dropIfExists(config('auth-logger.table_name'));
+    }
 };
