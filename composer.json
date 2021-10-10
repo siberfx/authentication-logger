@@ -17,6 +17,7 @@
     ],
     "require": {
         "php": "^7.4",
+        "laravel-notification-channels/telegram": "^0.6.0",
         "illuminate/contracts": "^8.37"
     },
     "require-dev": {
