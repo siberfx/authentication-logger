@@ -3,6 +3,17 @@
 namespace Siberfx\AuthenticationLogger;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Auth\Events\Failed;
+use Illuminate\Auth\Events\Login;
+use Illuminate\Auth\Events\Logout;
+use Siberfx\AuthenticationLogger\Commands\PurgeAuthenticationLogCommand;
+use Siberfx\AuthenticationLogger\Listeners\FailedLoginListener;
+use Siberfx\AuthenticationLogger\Listeners\LoginListener;
+use Siberfx\AuthenticationLogger\Listeners\LogoutListener;
+use Siberfx\AuthenticationLogger\Listeners\OtherDeviceLogoutListener;
+
+use Illuminate\Contracts\Events\Dispatcher;
+
 
 class AuthenticationLoggerServiceProvider extends ServiceProvider
 {
@@ -37,7 +48,11 @@ class AuthenticationLoggerServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        $events = $this->app->make(Dispatcher::class);
+        $events->listen(Login::class, LoginListener::class);
+        $events->listen(Failed::class, FailedLoginListener::class);
+        $events->listen(Logout::class, LogoutListener::class);
+        $events->listen(OtherDeviceLogout::class, OtherDeviceLogoutListener::class);
     }
 
 
