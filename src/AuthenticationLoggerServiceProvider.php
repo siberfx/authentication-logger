@@ -22,6 +22,14 @@ class AuthenticationLoggerServiceProvider extends ServiceProvider {
      */
     public function boot()
     {
+
+        // publish config file
+        $this->publishes([__DIR__.'/../config' => config_path()], 'config');
+
+        // publish migration from Backpack 4.0 to Backpack 4.1
+        $this->publishes([__DIR__.'/../database/migrations' => database_path('migrations')], 'migrations');
+
+
         $configPath = __DIR__.'/../config/auth-logger.php';
         $this->publishes([$configPath => config_path('auth-logger.php')]);
 
@@ -36,19 +44,8 @@ class AuthenticationLoggerServiceProvider extends ServiceProvider {
      */
     public function register()
     {
-        $configPath = __DIR__.'/../config/auth-logger.php';
-        $this->mergeConfigFrom($configPath, 'auth-logger');
-
+        //
     }
 
-    /**
-     * Get the services provided by the provider.
-     *
-     * @return array
-     */
-    public function provides()
-    {
-        return array('authentication-logger');
-    }
 
 }
