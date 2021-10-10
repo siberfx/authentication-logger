@@ -4,9 +4,8 @@ namespace Siberfx\AuthenticationLogger;
 
 use Illuminate\Support\ServiceProvider;
 
-class AuthenticationLoggerServiceProvider extends ServiceProvider {
-
-    // create_authentication_log_table
+class AuthenticationLoggerServiceProvider extends ServiceProvider
+{
 
     /**
      * Indicates if loading of the provider is deferred.
