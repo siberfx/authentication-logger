@@ -172,3 +172,20 @@ $schedule->command('authentication-log:purge')->monthly();
 
 **Note:** This example uses the `jenssegers/agent` package which is included by default with Laravel Jetstream as well as `jamesmills/laravel-timezone` for displaying timezones in the users local timezone. Both are optional, modify the table to fit your needs.
 
+```php
+use Illuminate\Support\ServiceProvider;
+use Illuminate\Auth\Events\Failed;
+use Illuminate\Auth\Events\Login;
+use Illuminate\Auth\Events\Logout;
+use Siberfx\AuthenticationLogger\Commands\PurgeAuthenticationLogCommand;
+use Siberfx\AuthenticationLogger\Listeners\FailedLoginListener;
+use Siberfx\AuthenticationLogger\Listeners\LoginListener;
+use Siberfx\AuthenticationLogger\Listeners\LogoutListener;
+use Siberfx\AuthenticationLogger\Listeners\OtherDeviceLogoutListener;
+
+
+        $events->listen(Login::class, LoginListener::class);
+        $events->listen(Failed::class, FailedLoginListener::class);
+        $events->listen(Logout::class, LogoutListener::class);
+        $events->listen(OtherDeviceLogout::class, OtherDeviceLogoutListener::class);
+```
