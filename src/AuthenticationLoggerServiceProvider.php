@@ -22,12 +22,11 @@ class AuthenticationLoggerServiceProvider extends ServiceProvider {
      */
     public function boot()
     {
-        $configPath = __DIR__.'/../../config/auth-logger.php';
+        $configPath = __DIR__.'/../config/auth-logger.php';
         $this->publishes([$configPath => config_path('auth-logger.php')]);
 
         $this->publishes([__DIR__.'/database/migrations' => database_path('migrations')], 'migrations');
 
-        $this->loadViewsFrom(__DIR__.'/../../views', 'auth-logger');
     }
 
     /**
@@ -37,7 +36,7 @@ class AuthenticationLoggerServiceProvider extends ServiceProvider {
      */
     public function register()
     {
-        $configPath = __DIR__.'/../../config/auth-logger.php';
+        $configPath = __DIR__.'/../config/auth-logger.php';
         $this->mergeConfigFrom($configPath, 'auth-logger');
 
     }
