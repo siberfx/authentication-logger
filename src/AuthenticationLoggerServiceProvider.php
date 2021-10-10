@@ -29,10 +29,6 @@ class AuthenticationLoggerServiceProvider extends ServiceProvider {
         // publish migration from Backpack 4.0 to Backpack 4.1
         $this->publishes([__DIR__.'/../database/migrations' => database_path('migrations')], 'migrations');
 
-
-        $configPath = __DIR__.'/../config/auth-logger.php';
-        $this->publishes([$configPath => config_path('auth-logger.php')]);
-
         $this->publishes([__DIR__.'/database/migrations' => database_path('migrations')], 'migrations');
 
     }
