@@ -48,11 +48,11 @@ class AuthenticationLoggerServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $events = $this->app->make(Dispatcher::class);
-        $events->listen(Login::class, LoginListener::class);
-        $events->listen(Failed::class, FailedLoginListener::class);
-        $events->listen(Logout::class, LogoutListener::class);
-        $events->listen(OtherDeviceLogout::class, OtherDeviceLogoutListener::class);
+//        $events = $this->app->make(Dispatcher::class);
+//        $events->listen(Login::class, LoginListener::class);
+//        $events->listen(Failed::class, FailedLoginListener::class);
+//        $events->listen(Logout::class, LogoutListener::class);
+//        $events->listen(OtherDeviceLogout::class, OtherDeviceLogoutListener::class);
     }
 
 
