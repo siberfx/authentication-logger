@@ -18,12 +18,10 @@
     "require": {
         "php": "^7.4",
         "illuminate/contracts": "^8.37",
-        "spatie/laravel-package-tools": "^1.4.3"
     },
     "require-dev": {
         "nunomaduro/collision": "^5.3",
         "orchestra/testbench": "^6.15",
-        "vimeo/psalm": "^4.8"
     },
     "autoload": {
         "psr-4": {
@@ -35,10 +33,6 @@
         "psr-4": {
             "Siberfx\\AuthenticationLogger\\Tests\\": "tests"
         }
-    },
-    "scripts": {
-        "test": "./vendor/bin/pest --no-coverage",
-        "test-coverage": "vendor/bin/phpunit --coverage-html coverage"
     },
     "config": {
         "sort-packages": true
