@@ -7,7 +7,7 @@ use Siberfx\AuthenticationLogger\Models\AuthLogger;
 
 class PurgeAuthenticationLogCommand extends Command
 {
-    public $signature = 'auth-logger:purge';
+    public $signature = 'authentication-logger:purge';
 
     public $description = 'Purge all authentication logs older than the configurable amount of days.';
 
