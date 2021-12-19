@@ -65,7 +65,7 @@ return [
 
     // When the clean-up command is run, delete old logs greater than `purge` days
     // Don't schedule the clean-up command if you want to keep logs forever.
-    'purge' => 365,
+    'purge' => 60,
 ];
 ```
 
@@ -150,22 +150,17 @@ You can turn this off within the configuration for each template.
 
 ## Purging Old Logs
 
-You may clear the old authentication log records using the `authentication-log:purge` Artisan command:
-
-```
-php artisan authentication-log:purge
-```
 
 Records that are older than the number of days specified in the `purge` option in your `config/authentication-log.php` will be deleted.
 
 ```php
-'purge' => 365,
+'purge' => 60,
 ```
 
-You can also schedule the command at an interval:
+You can also schedule the command at with `Prunnable` which shipped with Laravel 8.50 version:
 
 ```php
-$schedule->command('authentication-log:purge')->monthly();
+$schedule->command('model:prune')->daily();
 ```
 
 ## Displaying The Log
@@ -177,7 +172,6 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Auth\Events\Failed;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Auth\Events\Logout;
-use Siberfx\AuthenticationLogger\Commands\PurgeAuthenticationLogCommand;
 use Siberfx\AuthenticationLogger\Listeners\FailedLoginListener;
 use Siberfx\AuthenticationLogger\Listeners\LoginListener;
 use Siberfx\AuthenticationLogger\Listeners\LogoutListener;

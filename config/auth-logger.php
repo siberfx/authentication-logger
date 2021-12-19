@@ -30,5 +30,5 @@ return [
 
     // When the clean-up command is run, delete old logs greater than `purge` days
     // Don't schedule the clean-up command if you want to keep logs forever.
-    'purge' => 365,
+    'purge' => 60, // days
 ];
