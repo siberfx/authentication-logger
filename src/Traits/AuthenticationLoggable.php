@@ -13,7 +13,7 @@ trait AuthenticationLoggable
 
     public function notifyAuthenticationLogVia(): array
     {
-        return ['telegram'];
+        return ['mail'];
     }
 
     public function lastLoginAt()
