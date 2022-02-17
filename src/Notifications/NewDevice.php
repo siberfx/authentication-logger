@@ -23,7 +23,7 @@ class NewDevice extends Notification implements ShouldQueue
 
     public function via($notifiable)
     {
-        return $notifiable->notifyAuthLoggerVia();
+        return $notifiable->notifyAuthenticationLogVia();
     }
 
     public function toMail($notifiable)
