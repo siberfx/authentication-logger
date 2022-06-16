@@ -5,12 +5,9 @@ namespace Siberfx\AuthenticationLogger\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Illuminate\Database\Eloquent\Prunable;
 
 class AuthLogger extends Model
 {
-    use Prunable;
-
     public $timestamps = false;
 
     protected $table = 'auth_logger';
@@ -44,15 +41,5 @@ class AuthLogger extends Model
     public function authenticatable(): MorphTo
     {
         return $this->morphTo();
-    }
-
-    /**
-     * Get the prunable model query.
-     *
-     * @return Builder
-     */
-    public function prunable()
-    {
-        return static::where('created_at', '<=', now()->addDays(config('auth-logger.purge')));
     }
 }
