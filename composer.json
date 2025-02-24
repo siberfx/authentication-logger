@@ -17,21 +17,12 @@
     ],
     "require": {
         "php": "^8.2|^8.3",
-        "illuminate/contracts": "^10.0|^11.0"
-    },
-    "require-dev": {
-        "nunomaduro/collision": "^6.4",
-        "orchestra/testbench": "^6.6"
+        "illuminate/contracts": "^10.0|^11.0|^12.0"
     },
     "autoload": {
         "psr-4": {
             "Siberfx\\AuthenticationLogger\\": "src",
             "Siberfx\\AuthenticationLogger\\Database\\Factories\\": "database/factories"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "Siberfx\\AuthenticationLogger\\Tests\\": "tests"
         }
     },
     "config": {
