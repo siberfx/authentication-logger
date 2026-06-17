@@ -2,58 +2,42 @@
 
 namespace Siberfx\AuthenticationLogger;
 
-use Illuminate\Support\ServiceProvider;
 use Illuminate\Auth\Events\Failed;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Auth\Events\Logout;
-use Siberfx\AuthenticationLogger\Commands\PurgeAuthenticationLogCommand;
+use Illuminate\Auth\Events\OtherDeviceLogout;
+use Illuminate\Support\Facades\Event;
+use Illuminate\Support\ServiceProvider;
 use Siberfx\AuthenticationLogger\Listeners\FailedLoginListener;
 use Siberfx\AuthenticationLogger\Listeners\LoginListener;
 use Siberfx\AuthenticationLogger\Listeners\LogoutListener;
 use Siberfx\AuthenticationLogger\Listeners\OtherDeviceLogoutListener;
 
-use Illuminate\Contracts\Events\Dispatcher;
-
-
 class AuthenticationLoggerServiceProvider extends ServiceProvider
 {
-
-    /**
-     * Indicates if loading of the provider is deferred.
-     *
-     * @var bool
-     */
-    protected $defer = false;
-
     /**
      * Bootstrap the application events.
-     *
-     * @return void
      */
-    public function boot()
+    public function boot(): void
     {
-
         // publish config file
         $this->publishes([__DIR__.'/../config' => config_path()], 'config');
 
         // publish migration file
         $this->publishes([__DIR__.'/../database/migrations' => database_path('migrations')], 'migrations');
 
+        // register the authentication event listeners
+        Event::listen(Login::class, LoginListener::class);
+        Event::listen(Failed::class, FailedLoginListener::class);
+        Event::listen(Logout::class, LogoutListener::class);
+        Event::listen(OtherDeviceLogout::class, OtherDeviceLogoutListener::class);
     }
 
     /**
      * Register the service provider.
-     *
-     * @return void
      */
-    public function register()
+    public function register(): void
     {
-//        $events = $this->app->make(Dispatcher::class);
-//        $events->listen(Login::class, LoginListener::class);
-//        $events->listen(Failed::class, FailedLoginListener::class);
-//        $events->listen(Logout::class, LogoutListener::class);
-//        $events->listen(OtherDeviceLogout::class, OtherDeviceLogoutListener::class);
+        $this->mergeConfigFrom(__DIR__.'/../config/auth-logger.php', 'auth-logger');
     }
-
-
 }

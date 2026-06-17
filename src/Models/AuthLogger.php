@@ -26,11 +26,8 @@ class AuthLogger extends Model
         'cleared_by_user' => 'boolean',
         'location' => 'array',
         'login_successful' => 'boolean',
-    ];
-
-    protected $dates = [
-        'login_at',
-        'logout_at',
+        'login_at' => 'datetime',
+        'logout_at' => 'datetime',
     ];
 
     public function getTable()
