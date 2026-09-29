@@ -3,40 +3,54 @@
 namespace Siberfx\AuthenticationLogger\Listeners;
 
 use Illuminate\Auth\Events\Login;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Date;
+use Siberfx\AuthenticationLogger\AuthenticationLogger;
 use Siberfx\AuthenticationLogger\Notifications\NewDevice;
 
-class LoginListener
+readonly class LoginListener
 {
-    public Request $request;
-
-    public function __construct(Request $request)
-    {
-        $this->request = $request;
-    }
+    public function __construct(private Request $request) {}
 
     public function handle(Login $event): void
     {
-        if ($event->user) {
-            $user = $event->user;
-            $ip = $this->request->ip();
-            $userAgent = $this->request->userAgent();
-            $known = $user->authentications()->whereIpAddress($ip)->whereUserAgent($userAgent)->first();
-            $newUser = Carbon::parse($user->{$user->getCreatedAtColumn()})->diffInMinutes(Carbon::now()) < 1;
+        $user = $event->user;
 
-            $log = $user->authentications()->create([
-                'ip_address' => $ip,
-                'user_agent' => $userAgent,
-                'login_at' => now(),
-                'login_successful' => true,
-                'location' => config('auth-logger.notifications.new-device.location') ? optional(geoip()->getLocation($ip))->toArray() : null,
-            ]);
-
-            if (! $known && ! $newUser && config('auth-logger.notifications.new-device.enabled')) {
-                $newDevice = config('auth-logger.notifications.new-device.template') ?? NewDevice::class;
-                $user->notify(new $newDevice($log));
-            }
+        if (! AuthenticationLogger::tracks($user)) {
+            return;
         }
+
+        $ip = $this->request->ip();
+        $userAgent = $this->request->userAgent();
+
+        $known = $user->authentications()->successful()->fromDevice($ip, $userAgent)->exists();
+
+        $log = $user->authentications()->create([
+            'ip_address' => $ip,
+            'user_agent' => $userAgent,
+            'login_at' => now(),
+            'login_successful' => true,
+            'location' => AuthenticationLogger::location($ip, 'new-device'),
+        ]);
+
+        if ($known || $this->isNewlyRegistered($user) || ! config('auth-logger.notifications.new-device.enabled')) {
+            return;
+        }
+
+        $notification = config('auth-logger.notifications.new-device.template') ?? NewDevice::class;
+
+        $user->notify(new $notification($log));
+    }
+
+    /**
+     * A user who registered within the last minute is logging in for the first time,
+     * so there is no "other" device to warn them about.
+     */
+    private function isNewlyRegistered(Model $user): bool
+    {
+        $createdAt = $user->usesTimestamps() ? $user->getAttribute($user->getCreatedAtColumn()) : null;
+
+        return $createdAt !== null && Date::parse($createdAt)->isAfter(now()->subMinute());
     }
 }

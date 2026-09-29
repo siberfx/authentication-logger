@@ -16,28 +16,57 @@ use Siberfx\AuthenticationLogger\Listeners\OtherDeviceLogoutListener;
 class AuthenticationLoggerServiceProvider extends ServiceProvider
 {
     /**
-     * Bootstrap the application events.
+     * Auth events mapped to their listener, keyed by the `listeners` config toggle.
      */
-    public function boot(): void
-    {
-        // publish config file
-        $this->publishes([__DIR__.'/../config' => config_path()], 'config');
+    private const array LISTENERS = [
+        'login' => [Login::class, LoginListener::class],
+        'failed' => [Failed::class, FailedLoginListener::class],
+        'logout' => [Logout::class, LogoutListener::class],
+        'other-device-logout' => [OtherDeviceLogout::class, OtherDeviceLogoutListener::class],
+    ];
 
-        // publish migration file
-        $this->publishes([__DIR__.'/../database/migrations' => database_path('migrations')], 'migrations');
-
-        // register the authentication event listeners
-        Event::listen(Login::class, LoginListener::class);
-        Event::listen(Failed::class, FailedLoginListener::class);
-        Event::listen(Logout::class, LogoutListener::class);
-        Event::listen(OtherDeviceLogout::class, OtherDeviceLogoutListener::class);
-    }
-
-    /**
-     * Register the service provider.
-     */
     public function register(): void
     {
         $this->mergeConfigFrom(__DIR__.'/../config/auth-logger.php', 'auth-logger');
+    }
+
+    public function boot(): void
+    {
+        $this->loadViewsFrom(__DIR__.'/../resources/views', 'auth-logger');
+        $this->loadJsonTranslationsFrom(__DIR__.'/../resources/lang');
+
+        if ($this->app->runningInConsole()) {
+            $this->registerPublishing();
+        }
+
+        $this->registerListeners();
+    }
+
+    private function registerPublishing(): void
+    {
+        $this->publishes([
+            __DIR__.'/../config/auth-logger.php' => config_path('auth-logger.php'),
+        ], 'auth-logger-config');
+
+        $this->publishesMigrations([
+            __DIR__.'/../database/migrations' => database_path('migrations'),
+        ], 'auth-logger-migrations');
+
+        $this->publishes([
+            __DIR__.'/../resources/views' => resource_path('views/vendor/auth-logger'),
+        ], 'auth-logger-views');
+
+        $this->publishes([
+            __DIR__.'/../resources/lang' => $this->app->langPath('vendor/auth-logger'),
+        ], 'auth-logger-translations');
+    }
+
+    private function registerListeners(): void
+    {
+        foreach (self::LISTENERS as $key => [$event, $listener]) {
+            if (config("auth-logger.listeners.{$key}", true)) {
+                Event::listen($event, $listener);
+            }
+        }
     }
 }

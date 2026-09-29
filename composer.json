@@ -1,10 +1,14 @@
 {
     "name": "siberfx/authentication-logger",
-    "description": "Log user authentication details and send new device notifications.",
+    "description": "Log user authentication activity (logins, logouts, failed attempts) and notify users about new devices and failed logins.",
     "keywords": [
-        "Siberfx",
+        "siberfx",
         "laravel",
-        "authentication-logger"
+        "authentication",
+        "authentication-logger",
+        "login-history",
+        "security",
+        "new-device-notification"
     ],
     "homepage": "https://github.com/siberfx/authentication-logger",
     "license": "MIT",
@@ -16,14 +20,35 @@
         }
     ],
     "require": {
-        "php": "^8.4",
-        "illuminate/contracts": "^12.0|^13.0"
+        "php": "~8.4.0 || ~8.5.0",
+        "illuminate/auth": "^12.0 || ^13.0",
+        "illuminate/contracts": "^12.0 || ^13.0",
+        "illuminate/database": "^12.0 || ^13.0",
+        "illuminate/events": "^12.0 || ^13.0",
+        "illuminate/http": "^12.0 || ^13.0",
+        "illuminate/notifications": "^12.0 || ^13.0",
+        "illuminate/support": "^12.0 || ^13.0"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^10.0 || ^11.0",
+        "phpunit/phpunit": "^11.5 || ^12.0"
+    },
+    "suggest": {
+        "torann/geoip": "Required to resolve and store the location of each authentication."
     },
     "autoload": {
         "psr-4": {
             "Siberfx\\AuthenticationLogger\\": "src",
             "Siberfx\\AuthenticationLogger\\Database\\Factories\\": "database/factories"
         }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Siberfx\\AuthenticationLogger\\Tests\\": "tests"
+        }
+    },
+    "scripts": {
+        "test": "phpunit"
     },
     "config": {
         "sort-packages": true

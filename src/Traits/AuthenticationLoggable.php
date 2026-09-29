@@ -2,47 +2,78 @@
 
 namespace Siberfx\AuthenticationLogger\Traits;
 
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
+use Illuminate\Support\Carbon;
+use Siberfx\AuthenticationLogger\AuthenticationLogger;
 use Siberfx\AuthenticationLogger\Models\AuthLogger;
 
+/**
+ * Add to any authenticatable Eloquent model whose authentication activity should be logged.
+ *
+ * @mixin \Illuminate\Database\Eloquent\Model
+ */
 trait AuthenticationLoggable
 {
-    public function authentications()
+    /**
+     * @return MorphMany<AuthLogger, $this>
+     */
+    public function authentications(): MorphMany
     {
-        return $this->morphMany(AuthLogger::class, 'authenticatable')->latest('login_at');
+        return $this->morphMany(AuthenticationLogger::model(), 'authenticatable')->latest('login_at');
     }
 
+    /**
+     * @return MorphOne<AuthLogger, $this>
+     */
+    public function latestAuthentication(): MorphOne
+    {
+        return $this->morphOne(AuthenticationLogger::model(), 'authenticatable')->latestOfMany('login_at');
+    }
+
+    /**
+     * The channels the authentication notifications are delivered on.
+     *
+     * @return list<string>
+     */
     public function notifyAuthenticationLogVia(): array
     {
         return ['mail'];
     }
 
-    public function lastLoginAt()
+    public function lastLoginAt(): ?Carbon
     {
-        return optional($this->authentications()->first())->login_at;
+        return $this->authentications()->first()?->login_at;
     }
 
-    public function lastSuccessfulLoginAt()
+    public function lastSuccessfulLoginAt(): ?Carbon
     {
-        return optional($this->authentications()->whereLoginSuccessful(true)->first())->login_at;
+        return $this->authentications()->successful()->first()?->login_at;
     }
 
-    public function lastLoginIp()
+    public function lastLoginIp(): ?string
     {
-        return optional($this->authentications()->first())->ip_address;
+        return $this->authentications()->first()?->ip_address;
     }
 
-    public function lastSuccessfulLoginIp()
+    public function lastSuccessfulLoginIp(): ?string
     {
-        return optional($this->authentications()->whereLoginSuccessful(true)->first())->ip_address;
+        return $this->authentications()->successful()->first()?->ip_address;
     }
 
-    public function previousLoginAt()
+    /**
+     * The successful login before the current one.
+     */
+    public function previousLoginAt(): ?Carbon
     {
-        return optional($this->authentications()->skip(1)->first())->login_at;
+        return $this->authentications()->successful()->skip(1)->first()?->login_at;
     }
 
-    public function previousLoginIp()
+    /**
+     * The IP address of the successful login before the current one.
+     */
+    public function previousLoginIp(): ?string
     {
-        return optional($this->authentications()->skip(1)->first())->ip_address;
+        return $this->authentications()->successful()->skip(1)->first()?->ip_address;
     }
 }

@@ -8,12 +8,12 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create(config('auth-logger.table_name'), function (Blueprint $table) {
+        Schema::create(config('auth-logger.table_name', 'auth_logger'), function (Blueprint $table): void {
             $table->id();
             $table->morphs('authenticatable');
-            $table->string('ip_address', 45)->nullable();
+            $table->ipAddress()->nullable();
             $table->text('user_agent')->nullable();
-            $table->timestamp('login_at')->nullable();
+            $table->timestamp('login_at')->nullable()->index();
             $table->boolean('login_successful')->default(false);
             $table->timestamp('logout_at')->nullable();
             $table->boolean('cleared_by_user')->default(false);
@@ -23,6 +23,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists(config('auth-logger.table_name'));
+        Schema::dropIfExists(config('auth-logger.table_name', 'auth_logger'));
     }
 };
