@@ -33,8 +33,6 @@ Track every authentication on your Laravel application — **successful logins, 
 - [Testing](#testing)
 - [Upgrading from 1.x](#upgrading-from-1x)
 - [Changelog](#changelog)
-- [Contributing](#contributing)
-- [Security](#security)
 - [Credits](#credits)
 - [License](#license)
 
@@ -378,14 +376,6 @@ The suite runs on [Orchestra Testbench](https://github.com/orchestral/testbench)
 ## Changelog
 
 Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
-
-## Contributing
-
-Please see [CONTRIBUTING](.github/CONTRIBUTING.md) for details.
-
-## Security
-
-Please review [our security policy](.github/SECURITY.md) on how to report security vulnerabilities.
 
 ## Credits
 
